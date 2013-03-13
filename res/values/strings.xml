@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Medición Escolar</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="question">Pregunta 1</string>
+    <string name="alt1s">A</string>
+    <string name="alt2s">B</string>
+    <string name="alt3s">C</string>
+    <string name="alt4s">D</string>
+
+</resources>

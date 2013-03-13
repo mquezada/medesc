@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -22,6 +23,39 @@ public class InicioActivity extends Activity {
         setImageFromFileName(R.id.alt2, "images/B.PNG");
         setImageFromFileName(R.id.alt3, "images/C.PNG");        
         setImageFromFileName(R.id.alt4, "images/D.PNG");
+        
+        DatabaseHelper myDbHelper;
+        SQLiteDatabase myDb = null;
+
+        myDbHelper = new DatabaseHelper(this);
+        /*
+         * Database must be initialized before it can be used. This will ensure
+         * that the database exists and is the current version.
+         */
+         myDbHelper.initializeDataBase();
+
+         try {
+            // A reference to the database can be obtained after initialization.
+            myDb = myDbHelper.getWritableDatabase();
+            /*
+             * Place code to use database here.
+             */
+            
+            
+            
+            
+            
+         } catch (Exception ex) {
+            ex.printStackTrace();
+         } finally {
+            try {
+                myDbHelper.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+                myDb.close();
+            }
+        }
     }
 
     protected void setImageFromFileName(int imageViewId, String image_path) {

@@ -10,4 +10,7 @@
     <string name="alt3s">C</string>
     <string name="alt4s">D</string>
 
+    
+    <item type="string" name="databaseVersion" format="integer">1</item>
+    
 </resources>

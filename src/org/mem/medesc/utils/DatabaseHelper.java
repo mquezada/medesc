@@ -1,11 +1,16 @@
-package org.mem.medesc;
+package org.mem.medesc.utils;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
+
+import org.mem.medesc.R;
+import org.mem.medesc.beans.Pregunta;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -71,7 +76,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 copyDataBase();
             } catch (IOException e) {
                 throw new Error("Error copying database");
-            }
+            } 
         } else if (upgradeDatabase) {
             /*
              * If the database is upgraded by the copy and reload method, then
@@ -232,5 +237,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * "return myDataBase.query(....)" so it'd be easy to you to create adapters
      * for your views.
      */
-
+    
 }

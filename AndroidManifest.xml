@@ -5,8 +5,9 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="11"
+        android:minSdkVersion="8"
         android:targetSdkVersion="17" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -22,6 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="org.mem.medesc.CuestionarioActivity"></activity>
+        <activity android:name="org.mem.medesc.TerminoActivity"></activity>
+        <activity android:name="org.mem.medesc.AdminActivity"></activity>
+            
     </application>
 
 </manifest>

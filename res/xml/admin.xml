@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:title="Ajustes">
+    
+    <PreferenceCategory android:title="Ajustes">
+        <EditTextPreference android:key="password" android:summary="Cambiar la contraseña para entrar a estos ajustes" android:title="Cambiar contraseña" android:defaultValue="password"/>
+        
+        <Preference android:summary="Guarda un archivo CSV con resultados y los envía por e-mail" android:title="Enviar resultados" android:key="share"> </Preference><Preference android:summary="Guarda resultados en la tarjeta de memoria del dispositivo" android:title="Sólo generar archivo CSV" android:key="export"> </Preference>
+        
+    </PreferenceCategory> 
+
+    
+    
+</PreferenceScreen>

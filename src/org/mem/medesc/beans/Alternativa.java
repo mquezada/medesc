@@ -6,15 +6,27 @@ public class Alternativa {
 	long idPregunta;
 	String imgPath;
 	int tipo;
+	int apuntaA;
 	
 	public Alternativa() { }
 	
-	public Alternativa(long id, long idPregunta, String imgPath, int tipo) {
+	public Alternativa(long id, long idPregunta, String imgPath, int tipo, int apuntaA) {
 		super();
 		this.id = id;
 		this.idPregunta = idPregunta;
 		this.imgPath = imgPath;
 		this.tipo = tipo;
+		this.apuntaA = apuntaA;
+	}
+
+	
+	
+	public int getApuntaA() {
+		return apuntaA;
+	}
+
+	public void setApuntaA(int apuntaA) {
+		this.apuntaA = apuntaA;
 	}
 
 	public long getId() {
@@ -52,9 +64,9 @@ public class Alternativa {
 	@Override
 	public String toString() {
 		return "Alternativa [id=" + id + ", idPregunta=" + idPregunta
-				+ ", imgPath=" + imgPath + ", tipo=" + tipo + "]";
+				+ ", imgPath=" + imgPath + ", tipo=" + tipo + ", apuntaA="
+				+ apuntaA + "]";
 	}
-	
-	
+
 
 }

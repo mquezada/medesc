@@ -8,12 +8,11 @@ import java.util.List;
 import org.mem.medesc.beans.Alternativa;
 import org.mem.medesc.beans.Pregunta;
 import org.mem.medesc.beans.Respuesta;
+import org.mem.medesc.utils.Pair;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
-import au.com.bytecode.opencsv.CSVWriter;
 
 public class DbHandler {
 	static final String TBL_PREGUNTA = "pregunta";
@@ -46,7 +45,7 @@ public class DbHandler {
 	static public List<Alternativa> getAlternativas(SQLiteDatabase db, long idPregunta) {
 		List<Alternativa> alternativas = new ArrayList<Alternativa>();
 		Cursor cursor = db.query(TBL_ALTERNATIVA, 
-				new String[] {"id", "id_pregunta", "img_contenido", "tipo"}, 
+				new String[] {"id", "id_pregunta", "img_contenido", "tipo", "apunta_a"}, 
 				"id_pregunta=?",
 				new String[] { String.valueOf(idPregunta) }, null, null, null, null);
 		
@@ -57,6 +56,7 @@ public class DbHandler {
 				alt.setIdPregunta(Long.parseLong(cursor.getString(1)));
 				alt.setImgPath(cursor.getString(2));
 				alt.setTipo(Integer.parseInt(cursor.getString(3)));
+				alt.setApuntaA(Integer.parseInt(cursor.getString(4)));
 				
 				alternativas.add(alt);
 			} while(cursor.moveToNext());

@@ -12,7 +12,7 @@
     <string name="alt4s">D</string>
 
     
-    <item type="string" name="databaseVersion" format="integer">4</item>
+    <item type="string" name="databaseVersion" format="integer">5</item>
     <string name="nombre_ets">Ingrese el nombre del alumno</string>
     <string name="comenzar_s">Comenzar</string>
     <string name="admin_s">Administrar</string>

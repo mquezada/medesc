@@ -8,11 +8,15 @@ public class Respuesta {
 	int tipo;
 	int orden;
 	long duracion;
+	int grafo;
+	
+	int unidad;
+	Alternativa contestada;
 	
 	public Respuesta() { }
 
 	public Respuesta(long idMedicion, long idPregunta, long idAlternativa,
-			int tipo, int orden, long duracion) {
+			int tipo, int orden, long duracion, int grafo, int unidad, Alternativa contestada) {
 		super();
 		this.idMedicion = idMedicion;
 		this.idPregunta = idPregunta;
@@ -20,6 +24,35 @@ public class Respuesta {
 		this.tipo = tipo;
 		this.orden = orden;
 		this.duracion = duracion;
+		this.grafo = grafo;
+		this.unidad = unidad;
+		this.contestada = contestada;
+	}
+	
+	
+
+	public Alternativa getContestada() {
+		return contestada;
+	}
+
+	public void setContestada(Alternativa contestada) {
+		this.contestada = contestada;
+	}
+
+	public int getUnidad() {
+		return unidad;
+	}
+
+	public void setUnidad(int unidad) {
+		this.unidad = unidad;
+	}
+
+	public int getGrafo() {
+		return grafo;
+	}
+
+	public void setGrafo(int grafo) {
+		this.grafo = grafo;
 	}
 
 	public long getIdMedicion() {
@@ -74,9 +107,13 @@ public class Respuesta {
 	public String toString() {
 		return "Respuesta [idMedicion=" + idMedicion + ", idPregunta="
 				+ idPregunta + ", idAlternativa=" + idAlternativa + ", tipo="
-				+ tipo + ", orden=" + orden + ", duracion=" + duracion + "]";
+				+ tipo + ", orden=" + orden + ", duracion=" + duracion
+				+ ", grafo=" + grafo + ", unidad=" + unidad + ", contestada="
+				+ contestada + "]";
 	}
+
 	
+
 	
 	
 }

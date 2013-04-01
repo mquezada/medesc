@@ -8,6 +8,7 @@ public class Pregunta {
 	String imgPath;
 	int unidad;
 	int tipo;
+	boolean preguntada;
 	List<Alternativa> alternativas;
 	
 	public Pregunta() { }
@@ -20,6 +21,17 @@ public class Pregunta {
 		this.unidad = unidad;
 		this.tipo = tipo;
 		this.alternativas = alternativas;
+		this.preguntada = false;
+	}
+
+	
+	
+	public boolean isPreguntada() {
+		return preguntada;
+	}
+
+	public void setPreguntada(boolean preguntada) {
+		this.preguntada = preguntada;
 	}
 
 	public long getId() {
@@ -67,6 +79,14 @@ public class Pregunta {
 		return "Pregunta [id=" + id + ", imgPath=" + imgPath + ", unidad="
 				+ unidad + ", tipo=" + tipo + ", alternativas=" + alternativas
 				+ "]";
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof Pregunta) {
+			return this.id == ((Pregunta) o).id;
+		}
+		return super.equals(o);
 	}
 	
 	

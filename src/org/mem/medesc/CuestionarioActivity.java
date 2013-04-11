@@ -17,10 +17,12 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -40,6 +42,9 @@ public class CuestionarioActivity extends Activity implements OnClickListener {
     Pregunta preguntaActual;
     int nroPreguntaActual;
    
+    /* si esta mostrando preguntas de CL */
+    boolean comprensionLectora;
+    
     long idMedicion;
     long tiempoInicial;
     
@@ -48,6 +53,7 @@ public class CuestionarioActivity extends Activity implements OnClickListener {
 	 * inmutable
 	 */
 	List<Pregunta> preguntas;
+	List<Pregunta> preguntasCL;
 
 	/*
 	 * grupos de preguntas
@@ -73,7 +79,8 @@ public class CuestionarioActivity extends Activity implements OnClickListener {
 	private void init() {
 		nroPreguntaActual = 0;
         tiempoInicial = System.currentTimeMillis();
-    		
+    	comprensionLectora = false;
+        
         totalUnidades = 16;
 		/*
 		 * obtener lista de preguntas
@@ -82,6 +89,7 @@ public class CuestionarioActivity extends Activity implements OnClickListener {
             // A reference to the database can be obtained after initialization.
             myDb = myDbHelper.getWritableDatabase();
             preguntas = DbHandler.getAllPreguntas(myDb);
+            preguntasCL = DbHandler.getPreguntasCompLect(myDb);
             
          } catch (Exception ex) {
             ex.printStackTrace();
@@ -100,7 +108,7 @@ public class CuestionarioActivity extends Activity implements OnClickListener {
 		 */
 		unidades = new Unidad[totalUnidades];
 		unidadesClon = new Unidad[totalUnidades];
-		
+
 		for(Pregunta p : preguntas) {			
 			int unidad = p.getUnidad() - 1;
 			
@@ -141,6 +149,9 @@ public class CuestionarioActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		
+		esconderSysUI();
+		
 		setContentView(R.layout.activity_cuestionario);
 		
 		idMedicion = getIntent().getLongExtra("medicion_id", 0); 
@@ -164,7 +175,7 @@ public class CuestionarioActivity extends Activity implements OnClickListener {
         myDbHelper = new DatabaseHelper(this);
         myDbHelper.initializeDataBase();
         
-        nroPreguntaActualTextView = (TextView) findViewById(R.id.question_number);
+//        nroPreguntaActualTextView = (TextView) findViewById(R.id.question_number);
                 
         init();
         
@@ -173,72 +184,85 @@ public class CuestionarioActivity extends Activity implements OnClickListener {
         
         fillPregunta(null);
 	}
-	
+
 
 	boolean first = true;
 	boolean second = true;
 	int grafo = 1;
 	
+	/* debug, para ver todas las preguntas */
+	protected Pregunta getNextPregunta2(Respuesta r) {
+		
+		return preguntas.remove(0);
+	}
+	
 	protected Pregunta getNextPregunta(Respuesta r) {
+		nroPreguntaActual++;
 		grafo = (grafo + 1) % 2;
-		Pregunta pgrafo1 = null, pgrafo2 = null; 
+//		Pregunta pgrafo1 = null, pgrafo2 = null; 
 		
-		// grafo == 0
-		if(first) {
-			first = false;
-			pgrafo1 = grafo1.getNextPregunta();
-		} else
-		
-		// grafo == 1
-		if(second) {
-			grafo1.establecerRespuesta(r);
-			grafo1.seleccionarSiguienteUnidad();
-			
-			second = false;
-			pgrafo2 = grafo2.getNextPregunta();
-		} else
-		
-		// grafo == 0
-		if(!first && r.getGrafo() == (grafo+1)%2) {
-			grafo2.establecerRespuesta(r);
-			grafo2.seleccionarSiguienteUnidad();
-			pgrafo1 = grafo1.getNextPregunta();
-		} else
-		
-		// grafo == 1
-		if(!second && r.getGrafo() == (grafo+1)%2) {
-			grafo1.establecerRespuesta(r);
-			grafo1.seleccionarSiguienteUnidad();
-			pgrafo2 = grafo2.getNextPregunta();			
-		} 
-		
-		/** @TODO PROBAR ESTO! (probar todo, en realidad) */
-		if(grafo == 0) {
-			if(pgrafo1 == null) {
-				grafo = (grafo+1)%2;
-				return pgrafo2;
+		if(r != null) {
+			if(r.getGrafo() == 0) {
+				grafo1.establecerRespuesta(r);
+				grafo1.seleccionarSiguienteUnidad();
 			} else {
-				return pgrafo1;
+				grafo2.establecerRespuesta(r);
+				grafo2.seleccionarSiguienteUnidad();
+			}
+		}
+		
+		
+		Pregunta siguiente;
+		if(grafo == 0) {
+			siguiente = grafo1.getNextPregunta();
+		} else {
+			siguiente = grafo2.getNextPregunta();
+		}
+		
+		if(grafo == 0 && siguiente == null) {
+			grafo = 1;
+			siguiente = grafo2.getNextPregunta();
+		} else if(grafo == 1 && siguiente == null) {
+			grafo = 0;
+			siguiente = grafo1.getNextPregunta();
+		}
+		
+		return siguiente;		
+	}
+	
+	/* requiere api 11 */ 
+	protected void esconderSysUI() {
+		getWindow().getDecorView().setSystemUiVisibility(View.STATUS_BAR_HIDDEN);
+	}
+
+	
+	
+	protected void fillPregunta(Respuesta r) {
+		esconderSysUI();
+		
+		if(comprensionLectora) {
+			if(preguntasCL.size() > 0) {
+				nroPreguntaActual++;
+				preguntaActual = preguntasCL.remove(0);
+			} else {
+				preguntaActual = null;
 			}
 		} else {
-			if(pgrafo2 == null) {
-				grafo = (grafo+1)%2;
-				return pgrafo1;
-			} else {
-				return pgrafo2;
-			}
-		}	
-	}
+			preguntaActual = getNextPregunta(r);
+		}
 		
-	protected void fillPregunta(Respuesta r) {
-		preguntaActual = getNextPregunta(r);
-		
-		if(preguntaActual == null) {
+		if(comprensionLectora && preguntaActual == null) {
 			terminar();
 			return;
 		}
 		
-		nroPreguntaActualTextView.setText("Pregunta " + nroPreguntaActual);
+		if(preguntaActual == null) {
+			activarComprensionLectora();
+			return;
+		}
+		
+				
+//		nroPreguntaActualTextView.setText("Pregunta " + nroPreguntaActual);
 		
 		setImageFromFileName(preg, preguntaActual.getImgPath());
 		List<Alternativa> alternativas = preguntaActual.getAlternativas();
@@ -251,13 +275,44 @@ public class CuestionarioActivity extends Activity implements OnClickListener {
 			alt4.setVisibility(View.GONE);
 			alt4i.setVisibility(View.GONE);			
 		} else {
-			alt4.setVisibility(View.VISIBLE);
+ 			alt4.setVisibility(View.VISIBLE); 
 			alt4i.setVisibility(View.VISIBLE);
 			
 			setImageFromFileName(alt4i, alternativas.get(3).getImgPath());
 		}
 		
+		alt1.setEnabled(true);
+		alt2.setEnabled(true);
+		alt3.setEnabled(true);
+		alt4.setEnabled(true);
+		
 		Log.i(TAG, preguntaActual.toString());
+	}
+	
+	protected void activarComprensionLectora() {
+		ImageView lectura = (ImageView) findViewById(R.id.lectura_content);
+		lectura.setVisibility(View.VISIBLE);
+		setImageFromFileName(lectura, "U17/0.PNG");		
+		
+		/* redimensionar imagen de la pregunta, para que quepa todo en la pantalla */
+		LayoutParams paramsPreg = (LayoutParams) preg.getLayoutParams();
+		paramsPreg.height = 50;
+		// existing height is ok as is, no need to edit it
+		preg.setLayoutParams(paramsPreg); 
+		
+		/* achicar alternativas, para que quepa todo... */
+		LayoutParams alts = (LayoutParams) alt1i.getLayoutParams();
+		alts.height = 90;
+		// existing height is ok as is, no need to edit it
+		alt1.setLayoutParams(alts);
+		alt1i.setLayoutParams(alts);
+		alt2.setLayoutParams(alts);
+		alt2i.setLayoutParams(alts);
+		alt3.setLayoutParams(alts);
+		alt3i.setLayoutParams(alts);
+		
+		comprensionLectora = true;
+		fillPregunta(null); // goto ;D
 	}
 	
 	@Override
@@ -285,6 +340,11 @@ public class CuestionarioActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
+		alt1.setEnabled(false);
+		alt2.setEnabled(false);
+		alt3.setEnabled(false);
+		alt4.setEnabled(false);
+		
 		long idMed = idMedicion;
 		long idPreg = preguntaActual.getId();
 		long idAlt = 0;
@@ -340,4 +400,27 @@ public class CuestionarioActivity extends Activity implements OnClickListener {
 		
 		fillPregunta(r);
 	}
+	
+	
+	
+	class DesparecerStatusBar extends AsyncTask<Void, Void, Void> {
+		@Override
+		protected Void doInBackground(Void... params) {
+			while(true) {
+				// REQ ANDROID API 11
+				CuestionarioActivity.this.getWindow().getDecorView().setSystemUiVisibility(View.STATUS_BAR_HIDDEN);
+				
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					break;
+				}
+			}
+			
+			return null;
+		}
+	}
+	
 }

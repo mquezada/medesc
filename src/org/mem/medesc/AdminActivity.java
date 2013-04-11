@@ -13,6 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
@@ -55,7 +56,7 @@ public class AdminActivity extends PreferenceActivity {
                  
                  CSVWriter writer = null;
                  try {
-                     writer = new CSVWriter(new FileWriter("/sdcard/resultados.csv"), ',');
+                     writer = new CSVWriter(new FileWriter(Environment.getExternalStorageDirectory().getPath() + "/resultados.csv"), ',');
                      writer.writeAll(resultados);
                      writer.close();
                  } 
@@ -88,12 +89,12 @@ public class AdminActivity extends PreferenceActivity {
 		Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND); 
 	    emailIntent.setType("text/csv");
 //	    emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {"me@gmail.com"}); 
-	    emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Resultados medición"); 
+	    emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Resultados medicion"); 
 	    emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Se adjunta archivo csv");
 	    
-	    Log.v(getClass().getSimpleName(), "sPhotoUri=" + Uri.parse("file://"+ "/sdcard/resultados.csv"));
+	    Log.v(getClass().getSimpleName(), "sPhotoUri=" + Uri.parse("file://"+ Environment.getExternalStorageDirectory().getPath()+ "/resultados.csv"));
 	    
-	    emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+ "/sdcard/resultados.csv"));
+	    emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+ Environment.getExternalStorageDirectory().getPath() + "/resultados.csv"));
 	    startActivity(Intent.createChooser(emailIntent, "Compartir resultados..."));
 	}
 	

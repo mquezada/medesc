@@ -22,7 +22,29 @@ public class DbHandler {
 	
 	static public List<Pregunta> getAllPreguntas(SQLiteDatabase db) {
 		List<Pregunta> preguntas = new ArrayList<Pregunta>();
-		String selectQuery = "SELECT * FROM " + TBL_PREGUNTA;
+		String selectQuery = "SELECT * FROM " + TBL_PREGUNTA + " WHERE unidad < 17";
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		
+		
+		if(cursor.moveToFirst()) {
+			do {
+				Pregunta pregunta = new Pregunta();
+				pregunta.setId(Long.parseLong(cursor.getString(0)));
+				pregunta.setImgPath(cursor.getString(1));
+				pregunta.setUnidad(Integer.parseInt(cursor.getString(2)));
+				pregunta.setTipo(Integer.parseInt(cursor.getString(3)));
+				pregunta.setAlternativas(getAlternativas(db, pregunta.getId()));
+				
+				preguntas.add(pregunta);
+			} while(cursor.moveToNext());
+		}
+		
+		return preguntas;
+	}
+	
+	static public List<Pregunta> getPreguntasCompLect(SQLiteDatabase db) {
+		List<Pregunta> preguntas = new ArrayList<Pregunta>();
+		String selectQuery = "SELECT * FROM " + TBL_PREGUNTA + " WHERE unidad = 17";
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		
 		
@@ -70,7 +92,7 @@ public class DbHandler {
 	};
 	
 	static public List<String[]> getResultados(SQLiteDatabase db) {		
-		String query = "SELECT medicion.id, nombre_alumno, timestamp, respuesta.id_pregunta, letra, respuesta.tipo, orden, duracion FROM medicion " +
+		String query = "SELECT medicion.id, nombre_alumno, timestamp, respuesta.id_pregunta, letra, respuesta.tipo, respuesta.grafo, respuesta.unidad, orden, duracion FROM medicion " +
 				"INNER JOIN respuesta ON medicion.id = respuesta.id_medicion INNER JOIN alternativa ON alternativa.id = id_alternativa ORDER BY medicion.id, orden;";
 		Cursor cursor = db.rawQuery(query, null);		
 		
@@ -78,22 +100,24 @@ public class DbHandler {
 		String[] headers = new String[] {
 				"Nro medicion", "Nombre alumno", "Fecha medicion", 
 				"Nro Pregunta", "Alternativa", "Tipo Alternativa",
-				"Orden", "Duracion"
+				"Grafo", "Unidad", "Orden", "Duracion"
 		};
 		
 		results.add(headers);
 		
 		if(cursor.moveToFirst()) {
 			do {
-				String[] result = new String[8];
+				String[] result = new String[10];
 				result[0] = cursor.getString(0);
 				result[1] = cursor.getString(1);
 				result[2] = cursor.getString(2);
 				result[3] = cursor.getString(3);
 				result[4] = cursor.getString(4);
-				result[5] = tipoAlternativas[Integer.parseInt(cursor.getString(5))];
+				result[5] = tipoAlternativas[Integer.parseInt(cursor.getString(5))];				
 				result[6] = cursor.getString(6);
 				result[7] = cursor.getString(7);
+				result[8] = cursor.getString(8);
+				result[9] = cursor.getString(9);
 				
 				results.add(result);
 			} while(cursor.moveToNext());
@@ -122,6 +146,8 @@ public class DbHandler {
 		values.put("tipo", respuesta.getTipo());
 		values.put("orden", respuesta.getOrden());
 		values.put("duracion", respuesta.getDuracion());
+		values.put("grafo", respuesta.getGrafo());
+		values.put("unidad", respuesta.getUnidad());
 		
 		return db.insert(TBL_RESPUESTA, null, values);
 	}

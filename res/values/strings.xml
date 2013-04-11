@@ -10,13 +10,15 @@
     <string name="alt2s">B</string>
     <string name="alt3s">C</string>
     <string name="alt4s">D</string>
+    <string name="contentAlt">Alternativa</string>
 
     
-    <item type="string" name="databaseVersion" format="integer">5</item>
+    <item type="string" name="databaseVersion" format="integer">7</item>
+    
     <string name="nombre_ets">Ingrese el nombre del alumno</string>
     <string name="comenzar_s">Comenzar</string>
     <string name="admin_s">Administrar</string>
-    <string name="volvers">Volver</string>
-    <string name="terminos">Test completado</string>
+    <string name="volvers">Aceptar</string>
+    <string name="terminos">¡Felicitaciones!\nHas terminado la prueba</string>
     
 </resources>

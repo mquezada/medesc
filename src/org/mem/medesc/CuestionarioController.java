@@ -18,13 +18,13 @@ public class CuestionarioController {
 	static final int MAX_FALLIDAS = 2;
 	static final int TOTAL_ANOS = 4;
 	
-	static int TOTAL_PREGUNTAS_TEST = 4;
+	int TOTAL_PREGUNTAS_TEST;
 	
 	private Pair<Respuesta, Respuesta> respuestaAnterior;
 	private Pair<Respuesta, Respuesta> respuestaActual;
 	
 	private int unidadActual;
-	private int totalDummies;
+	static int totalDummies;
 	private int totalFallidas;
 	private int totalPreguntasAcum;
 	
@@ -49,26 +49,85 @@ public class CuestionarioController {
 		respuestaActual = new Pair<Respuesta, Respuesta>(null, null);
 		
 		clon = false;
+		
+		TOTAL_PREGUNTAS_TEST = 4;
 	}
 	
 	public Pregunta getNextPregunta() {
-		if(totalDummies == 3) {
+		if(totalDummies >= 3 && !clon) {
+			System.out.println("G"+grafoId+ " " + "Total dummies 3");
+			System.out.println("G"+grafoId+ " " + "Total preguntas acumulado = " + totalPreguntasAcum);	
 			return null;
 		}
 		
 		if(totalPreguntasAcum == TOTAL_PREGUNTAS_TEST) {
+			System.out.println("G"+grafoId+ " " + "Total preguntas acumulado = " + totalPreguntasAcum);			
+			System.out.println("G"+grafoId+ " " + "Total preguntas del test alcanzado: " + TOTAL_PREGUNTAS_TEST);
 			return null;
 		}
 		
-		totalPreguntasAcum++;
+		
+		Pregunta siguiente = null;
 		if(clon) {
-			return unidadesClon[unidadActual].seleccionarPreguntaAlAzar();
+			System.out.println("G"+grafoId+ " " + "Pregunta clon");
+			System.out.print("G"+grafoId+ " ");
+			siguiente = unidadesClon[unidadActual].seleccionarPreguntaAlAzar();
+			
+			int direccion = 1;
+			int signo = -1;
+			while(siguiente == null) {
+				if(unidadActual + direccion > unidadesClon.length-1 || unidadActual + direccion < 0)
+					break;
+				
+				if(unidadesClon[unidadActual + direccion] != null) {
+					System.out.print("G"+grafoId+ " ");
+					siguiente = unidadesClon[unidadActual + direccion].seleccionarPreguntaAlAzar();
+				} else { 
+					break;
+				}
+				
+				if(direccion < 0)
+					direccion = (Math.abs(direccion) + 1) * signo;
+				else
+					direccion = signo * direccion;
+				
+				signo = -signo;
+			}
+			
+			
 		} else {
-			return unidades[unidadActual].seleccionarPreguntaAlAzar();
+			System.out.println("G"+grafoId+ " " + "Pregunta original");
+			System.out.print("G"+grafoId+ " ");
+			siguiente = unidades[unidadActual].seleccionarPreguntaAlAzar();
+			 
+			int direccion = 1;
+			int signo = -1;
+			while(siguiente == null) {
+				if(unidadActual + direccion > unidades.length-1 || unidadActual + direccion < 0)
+					break;
+				
+				if(unidades[unidadActual + direccion] != null) {
+					System.out.print("G"+grafoId+ " ");
+					siguiente = unidades[unidadActual + direccion].seleccionarPreguntaAlAzar();
+				} else { 
+					break;
+				}
+				
+				if(direccion < 0)
+					direccion = (Math.abs(direccion) + 1) * signo;
+				else
+					direccion = signo * direccion;
+				
+				signo = -signo;
+			}		
+			
 		}
+		
+		return siguiente;
 	}
 	
 	public void establecerRespuesta(Respuesta r) {
+		
 		if(respuestaActual.getFirst() != null) {
 			if(respuestaActual.getSecond() != null) {				
 				respuestaAnterior.setFirst(respuestaActual.getFirst());
@@ -83,6 +142,9 @@ public class CuestionarioController {
 		} else {
 			respuestaActual.setFirst(r);
 		}		 
+		
+		System.out.println("G"+grafoId+ " " + "Par respuesta actual: " + respuestaActual.getFirst() + " " + respuestaActual.getSecond());
+		System.out.println("G"+grafoId+ " " + "Par respuesta anterior: " + respuestaAnterior.getFirst() + " " + respuestaAnterior.getSecond());
 	}
 	
 	public void seleccionarSiguienteUnidad() {
@@ -95,7 +157,7 @@ public class CuestionarioController {
 		if(r1 != null && r2 != null) {
 			// B / B
 			if(r1.getTipo() == B && r2.getTipo() == B) {
-			
+				System.out.println("G"+grafoId+ " " + "Buena/Buena");
 				Respuesta a1 = respuestaAnterior.getFirst();
 				Respuesta a2 = respuestaAnterior.getSecond();
 				
@@ -116,7 +178,7 @@ public class CuestionarioController {
 				 * se avanza en (A-U)/2 unidades, redondeando hacia arriba
 				 */
 				} else if(a1.getTipo() != B || a2.getTipo() != B) {
-					unidadActual = (int) Math.ceil(Math.abs(a1.getUnidad() - unidadActual)/2);
+					unidadActual = Math.min(TOTAL_UNIDADES - 1, unidadActual + (int) Math.ceil(Math.abs(a1.getUnidad() - unidadActual)/2));
 				}
 				
 			// B / M || M / B
@@ -130,26 +192,34 @@ public class CuestionarioController {
 						r1.getTipo() == Y ||
 						r1.getTipo() == D) && 
 					r2.getTipo() == B)) {
-				
+				System.out.println("G"+grafoId+ " " + "B/M o M/B");
 				/*
-				 * Se considera que es información “confusa” 
-				 * y se contabiliza esta “pregunta fallida”.
+				 * Se considera que es informaciï¿½n ï¿½confusaï¿½ 
+				 * y se contabiliza esta ï¿½pregunta fallidaï¿½.
 				 * 
-				 * Si hay menos de 2 “preguntas fallidas” previas, 
+				 * Si hay menos de 2 ï¿½preguntas fallidasï¿½ previas, 
 				 * se agrega una pregunta extra al grafo.
 				 */
 				if(totalFallidas < 2) {
+					System.out.println("G"+grafoId+ " " + "Total Fallidas < 2");
 					TOTAL_PREGUNTAS_TEST++;
 				}				
 				totalFallidas++;
 				
+				if(r1.getTipo() == D || r2.getTipo() == D) {
+					totalDummies++;
+				}				
+				
 				/* 
 				 * Se redirige a una pregunta perteneciente a una unidad 
-				 * del mismo año académico que U. ( 1-4 / 5-8 / 9-12 / 13-16 )
+				 * del mismo aï¿½o acadï¿½mico que U. ( 1-4 / 5-8 / 9-12 / 13-16 )
 				 */
 				int unidadesPorAno = TOTAL_UNIDADES / TOTAL_ANOS;
-				int min = (int) ((unidadActual/TOTAL_ANOS) * TOTAL_ANOS) + 1;
-				unidadActual = (int) (Math.random() * unidadesPorAno + min);
+				int min = (int) (((unidadActual+1)/TOTAL_ANOS) * TOTAL_ANOS);
+				unidadActual = (int) (Math.random() * unidadesPorAno + min) - 1;
+				
+				if(unidadActual < 0)
+					unidadActual = 0;
 				
 			// X(D) / Y(D)
 			} else if( 	(r1.getTipo() == X && r2.getTipo() == Y) ||				
@@ -159,11 +229,12 @@ public class CuestionarioController {
 						(r1.getTipo() == X && r2.getTipo() == D) ||
 						(r1.getTipo() == Y && r2.getTipo() == D) ||				
 						(r1.getTipo() == D && r2.getTipo() == D)) {
-				
+				System.out.println("G"+grafoId+ " " + "X(D) / Y(D)");
 				/*
 				 * contabilizar las dummies
 				 */
 				if (r1.getTipo() == D || r2.getTipo() == D) {
+					System.out.println("G"+grafoId+ " " + "Ambas Dummies, se suma 1");
 					totalDummies++;
 				}
 				
@@ -192,12 +263,13 @@ public class CuestionarioController {
 			// X(Y) / X(Y)
 			} else if((r1.getTipo() == X && r2.getTipo() == X) ||				
 						(r1.getTipo() == Y && r2.getTipo() == Y)) {
+				System.out.println("G"+grafoId+ " " + "X(Y) / X(Y)");
 				/*
 				 * El salto es directamente hacia la unidad indexada 
 				 * en la base de datos de respuestas.
 				 *   
 				 */
-				unidadActual = r1.getContestada().getApuntaA();
+				unidadActual = r1.getContestada().getApuntaA() - 1;
 			}
 			/*
 			 * en este punto, la unidad que se entregue no debe ser clon			
@@ -210,7 +282,9 @@ public class CuestionarioController {
 		} else {
 			clon = true;
 			// unidadActual = unidadActual
+			totalPreguntasAcum++;
 		}
+		System.out.println("G"+grafoId+ " " + "Siguiente unidad: " + (unidadActual+1));
 	}
 
 	public int getGrafoId() {

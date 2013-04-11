@@ -1,36 +1,42 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#ffffff"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".InicioActivity" >
 
-    <LinearLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
+<!--     <LinearLayout -->
+<!--         android:id="@+id/container" -->
+<!--         android:layout_width="match_parent" -->
+<!--         android:layout_height="wrap_content" -->
+<!--         android:orientation="vertical" > -->
 
         <LinearLayout
             android:id="@+id/question"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" 
-            android:layout_weight="0.4">
-
-            <TextView
-                android:id="@+id/question_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/question" />
-
+            android:layout_height="wrap_content"            
+            android:orientation="vertical" >
+            
+			<ImageView
+			    android:id="@+id/lectura_content"
+				android:layout_width="wrap_content"
+                android:layout_height="400dp"
+                android:visibility="gone"
+                android:gravity="center"                
+                android:contentDescription="@string/contentAlt"
+                android:src="@drawable/ic_launcher" />		    
+	
             <ImageView
                 android:id="@+id/question_content"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="260dp"
+                android:gravity="center"                
+                android:contentDescription="@string/contentAlt"
                 android:src="@drawable/ic_launcher" />
 
         </LinearLayout>
@@ -38,9 +44,8 @@
         <LinearLayout
             android:id="@+id/alts"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" 
-            android:layout_weight="0.6">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -48,15 +53,18 @@
 
                 <Button
                     android:id="@+id/alt1b"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:gravity="center" 
                     android:text="@string/alt1s" 
                     />
 
                 <ImageView
                     android:id="@+id/alt1"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+					android:layout_height="110dp"
+					android:contentDescription="@string/contentAlt"
+					android:gravity="center" 
                     android:src="@drawable/ic_launcher" />
 
             </LinearLayout>
@@ -67,14 +75,17 @@
 
                 <Button
                     android:id="@+id/alt2b"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:gravity="center" 
                     android:text="@string/alt2s"  />
 
                 <ImageView
                     android:id="@+id/alt2"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+					android:layout_height="110dp"
+					android:contentDescription="@string/contentAlt"
+					android:gravity="center" 
                     android:src="@drawable/ic_launcher" />
 
             </LinearLayout>
@@ -85,14 +96,17 @@
 
                 <Button
                     android:id="@+id/alt3b"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:gravity="center" 
                     android:text="@string/alt3s" />
 
                 <ImageView
                     android:id="@+id/alt3"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+					android:layout_height="110dp"
+					android:contentDescription="@string/contentAlt"
+					android:gravity="center" 
                     android:src="@drawable/ic_launcher" />
 
             </LinearLayout>
@@ -103,20 +117,23 @@
 
                 <Button
                     android:id="@+id/alt4b"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:gravity="center" 
                     android:text="@string/alt4s" />
 
                 <ImageView
                     android:id="@+id/alt4"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+					android:layout_height="110dp"
+					android:contentDescription="@string/contentAlt"
+					android:gravity="center" 
                     android:src="@drawable/ic_launcher" />
 
             </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+</LinearLayout>
 
-</RelativeLayout>
+<!-- </RelativeLayout> -->

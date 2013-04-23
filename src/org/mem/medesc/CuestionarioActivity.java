@@ -211,7 +211,6 @@ public class CuestionarioActivity extends Activity implements OnClickListener {
 			}
 		}
 		
-		
 		Pregunta siguiente;
 		if(grafo == 0) {
 			siguiente = grafo1.getNextPregunta();

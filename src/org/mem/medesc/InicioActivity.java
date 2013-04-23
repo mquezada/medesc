@@ -38,6 +38,17 @@ public class InicioActivity extends Activity implements OnClickListener {
         
         esconderSysUI();
         
+        /*
+         * primera ejecucion, poner contraseña "password"
+         */
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        String password = settings.getString("password", null);
+        if(password == null) {
+        	SharedPreferences.Editor editor = settings.edit();
+        	editor.putString("password", "password");
+        	editor.commit();
+        }
+        
         Button comenzar = (Button) findViewById(R.id.comenzarb);
         comenzar.setOnClickListener(this);
         
